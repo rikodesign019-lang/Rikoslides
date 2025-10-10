@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin - RikoSlides</title>
+  <style>
+    :root{
+      --brand:#003366;
+      --accent:#25D366;
+      --bg:#f5f6fa;
+      --card:#fff;
+      --muted:#666;
+    }
+    html,body{height:100%;margin:0;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    body{background:var(--bg);display:flex;flex-direction:column;align-items:center;gap:18px;padding:28px 12px;}
+
+    /* top bar */
+    .topbar{width:100%;max-width:980px;display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+    .topbar .logo{display:flex;align-items:center;gap:10px}
+    .topbar img{height:34px}
+    .topbar h1{font-size:16px;margin:0;color:var(--brand)}
+
+    .container{width:100%;max-width:980px;background:var(--card);border-radius:12px;padding:18px;box-shadow:0 6px 20px rgba(2,6,23,0.06);box-sizing:border-box;}
+
+    /* login */
+    .login{display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px}
+    .login input{padding:10px 12px;border-radius:8px;border:1px solid #ddd;width:260px;font-size:14px}
+    .login button{padding:10px 14px;border-radius:8px;background:var(--brand);color:#fff;border:0;cursor:pointer}
+    .login .note{color:var(--muted);font-size:13px}
+
+    /* admin form */
+    .admin{display:none;flex-direction:column;gap:12px}
+    .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+    select,input{padding:10px;border-radius:8px;border:1px solid #ddd;font-size:14px}
+    input[type="text"]{width:240px}
+    .generate{background:var(--brand);color:#fff;border:0;padding:10px 14px;border-radius:8px;cursor:pointer}
+
+    .output{margin-top:8px;background:linear-gradient(180deg,#fff,#fbfbfb);padding:12px;border-radius:8px;border:1px solid #eee;white-space:pre-wrap;overflow:auto;max-height:240px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+    .copy-btn{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer}
+    .download-sample{background:#666;color:#fff;border:0;padding:8px 10px;border-radius:8px;text-decoration:none}
+
+    .hint{font-size:13px;color:var(--muted)}
+    .small{font-size:12px;color:#888}
+
+    .hashbox{display:flex;gap:8px;align-items:center;margin-top:8px}
+    .hashbox input{width:420px;padding:8px;border-radius:8px;border:1px solid #ddd}
+
+    @media (max-width:640px){
+      .topbar,.container{padding:12px}
+      input[type="text"],select{width:100%}
+      .hashbox input{width:100%}
+    }
+
+    .toast{position:fixed;right:18px;bottom:18px;background:#222;color:#fff;padding:10px 14px;border-radius:8px;opacity:0;transform:translateY(8px);transition:all .28s ease}
+    .toast.show{opacity:1;transform:translateY(0)}
+
+    /* statistik di dalam container */
+    .stats-box{
+      margin-top:24px;
+      border-top:1px solid #eee;
+      padding-top:18px;
+    }
+    .stats-box iframe{
+      width:100%;
+      height:400px;
+      border:0;
+      border-radius:8px;
+      box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="logo">
+      <img src="assets/Slides2.png" alt="logo">
+      <div>
+        <h1>RikoSlides — Admin</h1>
+        <div class="small">Halaman admin (private) — jangan share link publik</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="login" class="login">
+      <div style="text-align:center">
+        <h2 style="margin:0;color:var(--brand)">Masuk (Developer)</h2>
+        <div class="small">Masukkan password developer untuk membuka panel admin</div>
+      </div>
+
+      <input id="pwd" type="password" placeholder="Password developer" />
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button id="btnLogin">Masuk</button>
+      </div>
+      <div id="loginErr" class="hint" style="display:none;color:#c0392b">Password salah.</div>
+    </div>
+
+    <div id="panel" class="admin" aria-hidden="true">
+      <h2 style="margin:0;color:var(--brand)">Tambah Card PPT Baru</h2>
+      <div class="small">Isi form lalu klik Generate — salin hasil dan tempel ke index.html → &lt;div class="grid"&gt;.</div>
+
+      <div style="margin-top:12px" class="row">
+        <select id="tema">
+          <option value="hukum">hukum</option>
+          <option value="guru">guru</option>
+          <option value="kesehatan">kesehatan</option>
+          <option value="sosial">sosial</option>
+          <option value="akuntansi">akuntansi</option>
+          <option value="agama">agama</option>
+          <option value="teknik">teknik</option>
+        </select>
+
+        <input id="kode" type="text" placeholder="Kode (misal 020)" />
+        <input id="univ" type="text" placeholder="Nama universitas (misal UGM)" />
+      </div>
+
+      <div style="margin-top:8px" class="row">
+        <input id="video" type="text" placeholder="YouTube embed link atau URL biasa" />
+        <input id="download" type="text" placeholder="Link download (Drive)" />
+      </div>
+
+      <div class="controls">
+        <button id="gen" class="generate">Generate Kode Card</button>
+        <button id="clear" style="background:#f0f0f0;color:#333;border-radius:8px;padding:8px;border:1px solid #ddd;cursor:pointer">Clear</button>
+        <button id="copyOut" class="copy-btn">Salin HTML</button>
+      </div>
+
+      <div id="output" class="output" aria-live="polite"></div>
+
+      <!-- Statistik Pengunjung -->
+      <div class="stats-box">
+        <h2 style="margin:0 0 12px 0;color:var(--brand);font-size:18px;">📈 Statistik Pengunjung</h2>
+        <iframe src="https://lookerstudio.google.com/embed/reporting/3ab451b7-eebd-41fc-b1d1-c5b7909a64dd/page/lI7aF"
+                allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox">
+        </iframe>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Tersalin ke clipboard</div>
+
+  <script>
+  // === Konversi YouTube & Drive otomatis ===
+  function toEmbedYouTube(url) {
+    try {
+      const reg1 = /youtu\.be\/([^?]+)/;
+      const reg2 = /v=([^&]+)/;
+      if (reg1.test(url)) return "https://www.youtube.com/embed/" + url.match(reg1)[1];
+      if (reg2.test(url)) return "https://www.youtube.com/embed/" + url.match(reg2)[1];
+      return url;
+    } catch {
+      return url;
+    }
+  }
+
+  function toDriveDownload(url) {
+    try {
+      const match = url.match(/\/d\/([^/]+)\//);
+      if (match && match[1]) {
+        return "https://drive.google.com/uc?export=download&id=" + match[1];
+      }
+      return url;
+    } catch {
+      return url;
+    }
+  }
+
+  // === LOGIN ===
+  const btnLogin = document.getElementById("btnLogin");
+  const pwdInput = document.getElementById("pwd");
+  const loginBox = document.getElementById("login");
+  const adminPanel = document.getElementById("panel");
+  const loginErr = document.getElementById("loginErr");
+
+  const storedPassword = "riko019";
+
+  btnLogin.addEventListener("click", () => {
+    const input = pwdInput.value.trim();
+    if (input === storedPassword) {
+      loginBox.style.display = "none";
+      adminPanel.style.display = "flex";
+      adminPanel.setAttribute("aria-hidden", "false");
+    } else {
+      loginErr.style.display = "block";
+      setTimeout(() => (loginErr.style.display = "none"), 2000);
+    }
+  });
+
+  // === GENERATOR CARD ===
+  const btnGen = document.getElementById("gen");
+  const btnCopy = document.getElementById("copyOut");
+  const btnClear = document.getElementById("clear");
+  const output = document.getElementById("output");
+
+  btnGen.addEventListener("click", () => {
+    const tema = document.getElementById("tema").value;
+    const kode = document.getElementById("kode").value;
+    const univ = document.getElementById("univ").value;
+    const video = toEmbedYouTube(document.getElementById("video").value);
+    const download = toDriveDownload(document.getElementById("download").value);
+
+    const cardHTML = `
+<div class="card" data-theme="${tema}">
+  <iframe src="${video}" allowfullscreen></iframe>
+  <div class="card-info">
+    <h3>${kode}</h3><span class="univ">${univ}</span>
+  </div>
+  <a href="${download}" class="download-btn" download>Download</a>
+</div>`;
+
+    output.textContent = cardHTML.trim();
+  });
+
+  btnCopy.addEventListener("click", () => {
+    navigator.clipboard.writeText(output.textContent);
+    const toast = document.getElementById("toast");
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2000);
+  });
+
+  btnClear.addEventListener("click", () => {
+    document.getElementById("tema").value = "hukum";
+    document.getElementById("kode").value = "";
+    document.getElementById("univ").value = "";
+    document.getElementById("video").value = "";
+    document.getElementById("download").value = "";
+    output.textContent = "";
+  });
+  </script>
+
+</body>
+</html>
