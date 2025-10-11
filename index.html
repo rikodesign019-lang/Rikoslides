@@ -81,6 +81,17 @@
          class="wa-icon">
     Pesan Sekarang
   </a>
+
+    <!-- Kotak Saran / Request Template -->
+  <div class="suggest-box">
+    <h3>Request Template</h3>
+    <form id="suggestForm">
+      <input type="text" id="name" placeholder="Nama kamu" required>
+      <textarea id="message" placeholder="Tulis saran atau request template..." required></textarea>
+      <button type="submit">Kirim</button>
+    </form>
+    <p id="statusMsg"></p>
+  </div>
 </aside>
 
 
@@ -478,6 +489,38 @@
       }
     };
   });
+</script>
+
+<script>
+document.getElementById("suggestForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  
+  const name = document.getElementById("name").value;
+  const message = document.getElementById("message").value;
+  const statusMsg = document.getElementById("statusMsg");
+
+  // Token dan Chat ID
+  const botToken = "8311449425:AAEt4JzMfRDv5trpyNW04aXuY_fX-7njuLI";
+  const chatId = "6503907680";
+
+  // Pesan yang dikirim ke Telegram
+  const text = `📩 *Pesan Baru dari Website RikoSlides*%0A👤 Nama: ${name}%0A💬 Pesan: ${message}`;
+
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${text}&parse_mode=Markdown`);
+    if (response.ok) {
+      statusMsg.textContent = "✅ Pesan berhasil dikirim!";
+      statusMsg.style.color = "green";
+      document.getElementById("suggestForm").reset();
+    } else {
+      statusMsg.textContent = "⚠️ Gagal mengirim pesan.";
+      statusMsg.style.color = "red";
+    }
+  } catch (error) {
+    statusMsg.textContent = "❌ Terjadi kesalahan jaringan.";
+    statusMsg.style.color = "red";
+  }
+});
 </script>
 
 </body>

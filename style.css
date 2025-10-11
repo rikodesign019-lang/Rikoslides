@@ -305,3 +305,49 @@ footer {
   max-width: 728px;
   height: 90px;
 }
+
+.suggest-box {
+  margin-top: 20px;
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.suggest-box h3 {
+  color: #003366;
+  margin-bottom: 10px;
+}
+
+.suggest-box input,
+.suggest-box textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  resize: none;
+}
+
+.suggest-box button {
+  width: 100%;
+  background: #003366;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.suggest-box button:hover {
+  opacity: 0.9;
+}
+
+#statusMsg {
+  margin-top: 8px;
+  font-size: 13px;
+  text-align: center;
+}
+
