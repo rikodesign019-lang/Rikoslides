@@ -50,3 +50,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+// === Auto play video on hover ===
+document.querySelectorAll('.card iframe').forEach((iframe) => {
+  const originalSrc = iframe.src.split('?')[0]; // ambil base URL tanpa parameter
+  const params = "?controls=0&modestbranding=1&rel=0&showinfo=0"; // biar tampilan bersih
+
+  iframe.parentElement.addEventListener('mouseenter', () => {
+    iframe.src = `${originalSrc}${params}&autoplay=1&mute=1`; // play otomatis tanpa suara
+  });
+
+  iframe.parentElement.addEventListener('mouseleave', () => {
+    iframe.src = `${originalSrc}${params}`; // stop video saat mouse keluar
+  });
+});
+
+
